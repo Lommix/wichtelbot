@@ -1,22 +1,21 @@
 import { Input } from "postcss";
 import { Component, For, createSignal } from "solid-js";
-import { apiPost } from "../Api";
 
-const socket = new WebSocket("ws://localhost:8080/chat")
-
-socket.onopen = (e: Event) => {
-    console.log(e);
-}
-
-socket.onmessage = (e: MessageEvent) => {
-    console.log(e);
-}
 
 const Chat: Component<{}> = (props) => {
 
     const [chat, setChat] = createSignal<string[]>(["hello", "this", "test", "dasda dashdashd asd asdhahsd asdhasdhasd ashdhasdhdas"])
     const [input, setInput] = createSignal("")
 
+    const socket = new WebSocket("ws://localhost:8080/chat")
+
+    socket.onopen = (e: Event) => {
+        console.log(e);
+    }
+
+    socket.onmessage = (e: MessageEvent) => {
+        console.log(e);
+    }
     const say = (e: SubmitEvent) => {
         e.preventDefault()
         socket.send(input())

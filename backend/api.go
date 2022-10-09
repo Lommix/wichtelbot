@@ -1,6 +1,7 @@
 package backend
 
 import (
+	"encoding/gob"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,20 +16,36 @@ type User struct {
 	Ready  bool
 }
 
+func init() {
+	gob.Register(&User{})
+}
+
 func LoginHandler(ctx *gin.Context) {
 	var user User
 	if err := ctx.BindJSON(&user); err != nil {
 		panic(err)
 	}
-
 	user.Id = uuid.NewV4().String()
 	user.Ready = false
-    
-	//check if loged in
-	//register user
-	//get or create room
-	session, _ := Cookies.Get(ctx.Request, "session")
-	session.Values["accpedted"] = true
-	session.Save(ctx.Request, ctx.Writer)
+
+	session, _ := Store.Get(ctx.Request, "session")
+	session.Values["user"] = user
+
+	err := session.Save(ctx.Request, ctx.Writer)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, "you failed to log in")
+		ctx.Abort()
+	}
+
 	ctx.JSON(http.StatusOK, user)
+}
+
+func GetUserHandler(ctx *gin.Context) {
+	session, _ := Store.Get(ctx.Request, "session")
+	if session.IsNew {
+		ctx.JSON(http.StatusNetworkAuthenticationRequired, "login first")
+		return
+	}
+	currentUser := session.Values["user"]
+	ctx.JSON(http.StatusOK, currentUser)
 }

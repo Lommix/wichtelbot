@@ -2,11 +2,8 @@ package backend
 
 import "github.com/gorilla/sessions"
 
-var Cookies *sessions.CookieStore
+var key = []byte("superduperultrasecret")
+var Store *sessions.CookieStore = sessions.NewCookieStore(key)
+
 var Clients []Client
 
-
-
-func init() {
-	Cookies = sessions.NewCookieStore([]byte("session"))
-}

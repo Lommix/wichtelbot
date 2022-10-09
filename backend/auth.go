@@ -8,7 +8,7 @@ import (
 
 func AuthHandler(ctx *gin.Context) {
 
-	session, _ := Cookies.Get(ctx.Request, "session")
+	session, _ := Store.Get(ctx.Request, "session")
 	user := session.Values["user"]
 
 	// //TODO: validate user
@@ -17,3 +17,4 @@ func AuthHandler(ctx *gin.Context) {
 		ctx.Abort()
 	}
 }
+

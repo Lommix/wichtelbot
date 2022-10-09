@@ -1,5 +1,4 @@
 import { Component, For, createSignal } from "solid-js";
-import { apiGet } from "../Api";
 import Chat from "./Chat";
 
 
