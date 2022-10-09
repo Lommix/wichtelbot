@@ -16,6 +16,8 @@ type User struct {
 	Ready  bool
 }
 
+const COOKIE_NAME = "session"
+
 func init() {
 	gob.Register(&User{})
 }
@@ -28,24 +30,34 @@ func LoginHandler(ctx *gin.Context) {
 	user.Id = uuid.NewV4().String()
 	user.Ready = false
 
-	session, _ := Store.Get(ctx.Request, "session")
+	session, _ := Store.Get(ctx.Request, COOKIE_NAME)
 	session.Values["user"] = user
+	session.Options.MaxAge = 3600
 
 	err := session.Save(ctx.Request, ctx.Writer)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, "you failed to log in")
-		ctx.Abort()
+		return
 	}
 
 	ctx.JSON(http.StatusOK, user)
 }
 
-func GetUserHandler(ctx *gin.Context) {
-	session, _ := Store.Get(ctx.Request, "session")
+func LogoutHandler(ctx *gin.Context) {
+	session, _ := Store.Get(ctx.Request, COOKIE_NAME)
 	if session.IsNew {
+		ctx.JSON(http.StatusNetworkAuthenticationRequired, "login to logout")
+		return
+	}
+	session.Values["user"] = nil
+	ctx.JSON(http.StatusOK, "you logged out")
+}
+
+func GetUserHandler(ctx *gin.Context) {
+	session, _ := Store.Get(ctx.Request, COOKIE_NAME)
+	if session.IsNew || session.Values["user"] == nil {
 		ctx.JSON(http.StatusNetworkAuthenticationRequired, "login first")
 		return
 	}
-	currentUser := session.Values["user"]
-	ctx.JSON(http.StatusOK, currentUser)
+	ctx.JSON(http.StatusOK, session.Values["user"])
 }

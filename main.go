@@ -35,18 +35,14 @@ func main() {
 		ctx.File("frontend/dist/index.html")
 	})
 
+	router.GET("/logout", backend.LogoutHandler)
 	router.POST("/login", backend.LoginHandler)
 	router.GET("/user", backend.GetUserHandler)
+
 	router.GET("/chat", func(ctx *gin.Context) {
 		client := backend.SpawnClient("lol", ctx)
 		backend.Clients = append(backend.Clients, *client)
 	})
-
-	// api := router.Group("/api", backend.AuthHandler)
-	// api.GET("/room", controller.GetRoomContext)
-	// api.GET("/chat", controller.GetChat)
-	// api.POST("/say", controller.Say)
-	// api.POST("/ready", controller.GetChat)
 
 	router.Run(":8080")
 }

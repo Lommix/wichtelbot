@@ -1,4 +1,4 @@
-import { Component } from 'solid-js';
+import { Component, onMount } from 'solid-js';
 import Login from './components/Login'
 import Room from './components/Room';
 import { useStore } from './store'
@@ -6,7 +6,9 @@ import { useStore } from './store'
 
 const App: Component = () => {
     const [state, { isLoggedIn, getUser }] = useStore();
-	console.log(getUser())
+
+	onMount(() => {getUser()})
+
     return (
         <div>
             <div class="w-screen h-screen flex origin-center bg-accent">
