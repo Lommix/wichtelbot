@@ -1,11 +1,17 @@
 package backend
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+)
+
+var (
+	newline = []byte{'\n'}
+	space   = []byte{' '}
 )
 
 var upgrader = websocket.Upgrader{
@@ -17,39 +23,35 @@ var upgrader = websocket.Upgrader{
 }
 
 type comPackage struct {
-	Message string
-	Action  string
+	Action string
+	Args  string
 }
 
 type Client struct {
 	id   string
 	conn *websocket.Conn
-	send chan *[]byte
+	send chan comPackage
 }
 
-func (c *Client) initWriteObserver() {
-	defer func() {
-		//cleanup
-	}()
+func (c *Client) runWrite() {
 	c.conn.SetReadLimit(1024)
 	for {
-		if _, ok := <-c.send; ok {
-			c.conn.WriteJSON("hello world")
+		if msg, ok := <-c.send; ok {
+			// message := bytes.TrimSpace(bytes.Replace(msg, newline, space, -1))
+			c.conn.WriteJSON(msg)
 		}
 	}
 }
 
-func (c *Client) initReadObserver() {
-	defer func() {
-		//cleanup
-	}()
+func (c *Client) runRead() {
 	for {
-		_, msg, err := c.conn.ReadMessage()
-
+		var com comPackage
+		err := c.conn.ReadJSON(&com)
 		if err != nil {
 			break
 		}
-		c.send <- &msg
+		fmt.Println(com)
+		c.send <- com
 	}
 }
 
@@ -60,10 +62,10 @@ func SpawnClient(id string, ctx *gin.Context) *Client {
 		log.Println(err)
 	}
 
-	client := &Client{id: id, conn: conn, send: make(chan *[]byte, 256)}
+	client := &Client{id: id, conn: conn, send: make(chan comPackage, 256)}
 
-	go client.initReadObserver()
-	go client.initWriteObserver()
+	go client.runRead()
+	go client.runWrite()
 
 	//setup send and recieve
 
