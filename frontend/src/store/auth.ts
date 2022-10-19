@@ -24,11 +24,15 @@ export default function createAuth(actions: Object) {
 		getUser: () => {
 			actions.apiGet<{ message: string }>(getUserUrl).then(data => {
 				//if user is returned
+				if (data === false){
+					return
+				}
 				const currentUser: IUser = {
 					name: data.Name,
 					tags: data.Tags,
 					notice: data.Notice
 				}
+				console.log(currentUser)
 				setUser(currentUser)
 			})
 		},

@@ -50,13 +50,14 @@ func LogoutHandler(ctx *gin.Context) {
 		return
 	}
 	session.Values["user"] = nil
+	session.Save(ctx.Request, ctx.Writer)
 	ctx.JSON(http.StatusOK, "you logged out")
 }
 
 func GetUserHandler(ctx *gin.Context) {
 	session, _ := Store.Get(ctx.Request, COOKIE_NAME)
 	if session.IsNew || session.Values["user"] == nil {
-		ctx.JSON(http.StatusNetworkAuthenticationRequired, "login first")
+		ctx.JSON(http.StatusOK, false)
 		return
 	}
 	ctx.JSON(http.StatusOK, session.Values["user"])
