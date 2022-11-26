@@ -1,0 +1,46 @@
+[
+ {
+  "Id": "3495cceb-c157-4136-ae34-128a5de36abd",
+  "Name": "lorenz",
+  "Password": "123",
+  "Tags": [
+   "kaffee",
+   "alk"
+  ],
+  "Notice": "gib money",
+  "Partner": "155f9f53-f3c9-4ece-997a-8c9bc7d2a997"
+ },
+ {
+  "Id": "155f9f53-f3c9-4ece-997a-8c9bc7d2a997",
+  "Name": "tong",
+  "Password": "123",
+  "Tags": [
+   "kaffee",
+   "alk"
+  ],
+  "Notice": "gib money",
+  "Partner": "3495cceb-c157-4136-ae34-128a5de36abd"
+ },
+ {
+  "Id": "4b80e441-93e8-4073-a9f2-ffc6b7174ed4",
+  "Name": "toni",
+  "Password": "123",
+  "Tags": [
+   "kaffee",
+   "alk"
+  ],
+  "Notice": "gib money",
+  "Partner": ""
+ },
+ {
+  "Id": "8d8b34ec-3795-4c3f-a0f5-5af9205c953d",
+  "Name": "dora",
+  "Password": "123",
+  "Tags": [
+   "kaffee",
+   "alk"
+  ],
+  "Notice": "gib money",
+  "Partner": ""
+ }
+]

@@ -1,2 +1,37 @@
-#debug tests
-GET http://127.0.0.1:8080/index
+#login
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+	"name" : "lorenz",
+	"password" : "123"
+}
+
+---
+
+#register
+POST http://localhost:8080/register
+Content-Type: application/json
+
+{
+	"name":"dora",
+	"password":"123",
+	"notice":"gib money",
+	"tags":["kaffee", "alk"]
+}
+
+---
+
+#get user
+GET http://localhost:8080/user
+
+#play
+POST http://localhost:8080/play
+Content-Type: application/json
+
+{
+	"token" : "testtoken"
+}
+
+---
+

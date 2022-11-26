@@ -1,28 +1,25 @@
 package main
 
 import (
-	"wichtel-app/backend"
+	"wichtel-app/backend/api"
+	"wichtel-app/backend/storage"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
-
-type connection struct {
-	ws   *websocket.Conn
-	send chan []byte
-}
 
 func main() {
+
+	err := storage.Load()
+	if err != nil{
+		panic("failed to load storage")
+	}
+
 	router := gin.Default()
 
-	//dev
+	//debug
 	router.Use(cors.New(cors.Config{
         AllowOrigins:     []string{"http://localhost:3000","http://localhost:8080"},
 		AllowHeaders:     []string{"Origin"},
@@ -31,18 +28,12 @@ func main() {
 	}))
 
 	router.Use(static.Serve("/", static.LocalFile("frontend/dist/", true)))
-	router.GET("/:room", func(ctx *gin.Context) {
-		ctx.File("frontend/dist/index.html")
-	})
-
-	router.GET("/logout", backend.LogoutHandler)
-	router.POST("/login", backend.LoginHandler)
-	router.GET("/user", backend.GetUserHandler)
-
-	router.GET("/chat", func(ctx *gin.Context) {
-		client := backend.SpawnClient("lol", ctx)
-		backend.Clients = append(backend.Clients, *client)
-	})
+	
+	router.GET("/logout", api.LogoutHandler)
+	router.POST("/login", api.LoginHandler)
+	router.POST("/register", api.RegisterHandler)
+	router.POST("/play", api.PlayHandler)
+	router.GET("/user", api.GetUserHandler)
 
 	router.Run(":8080")
 }
