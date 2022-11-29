@@ -2,17 +2,24 @@ package api
 
 import (
 	"net/http"
-	"wichtel-app/backend/storage"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
 
 func AuthHandler(ctx *gin.Context) {
-	session, _ := storage.Store.Get(ctx.Request, storage.COOKIE_NAME)
-	user := session.Values["user"]
-	if user == nil {
-		ctx.JSON(http.StatusNetworkAuthenticationRequired, gin.H{"message": "Action requires valid user"})
+	token, ok := os.LookupEnv("token")
+	if !ok {
+		ctx.JSON(http.StatusNetworkAuthenticationRequired, gin.H{"message": "missing env token"})
 		ctx.Abort()
+		return
+	}
+
+	bearerToken := ctx.Request.Header.Get("Authorization")
+
+	if bearerToken != token {
+		ctx.JSON(http.StatusNetworkAuthenticationRequired, gin.H{"message": "No authentication provided"})
+		ctx.Abort()
+		return
 	}
 }
-

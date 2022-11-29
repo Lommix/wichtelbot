@@ -4,6 +4,7 @@ import (
 	"encoding/gob"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -11,12 +12,12 @@ import (
 )
 
 type User struct {
-	Id        string
-	Name      string
-	Password  string
-	Tags      []string
-	Notice    string
-	Partner   Partner
+	Id       string
+	Name     string
+	Password string
+	Tags     []string
+	Notice   string
+	Partner  Partner
 }
 
 type Partner struct {
@@ -83,6 +84,19 @@ func GetById(id string) (*User, error) {
 		}
 	}
 	return nil, errors.New("Nutzer existiert nicht")
+}
+
+func Udate(user *User) {
+	for i := range Users {
+		if Users[i].Id == user.Id {
+			Users[i].Tags = user.Tags
+			Users[i].Notice = user.Notice
+
+			fmt.Println(Users[i])
+			Save()
+		}
+	}
+
 }
 
 // Checks if username is registered

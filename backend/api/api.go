@@ -19,7 +19,7 @@ func RegisterHandler(ctx *gin.Context) {
 	}
 
 	if storage.Has(user.Name) {
-		ctx.JSON(http.StatusBadRequest, "Der Name existiert schon")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Der Name existiert schon"})
 		return
 	}
 
@@ -32,11 +32,11 @@ func RegisterHandler(ctx *gin.Context) {
 	}
 
 	session, _ := storage.Store.Get(ctx.Request, storage.COOKIE_NAME)
-	session.Values["user"] = user
+	session.Values["user"] = user.Id
 	session.Options.MaxAge = 3600
 	err = session.Save(ctx.Request, ctx.Writer)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, "Cookie Probleme, frag den Bäcker")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Cookie Probleme, frag den Bäcker"})
 		return
 	}
 
@@ -54,19 +54,20 @@ func UpdateHandler(ctx *gin.Context) {
 		return
 	}
 
-
 	session, err := storage.Store.Get(ctx.Request, storage.COOKIE_NAME)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, "Cookie Probleme, frag den Bäcker")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Cookie Probleme, frag den Bäcker"})
 		return
 	}
 
-	user := session.Values["user"].(*storage.User)
+	id := session.Values["user"].(string)
+
+	user, _ := storage.GetById(id)
 
 	user.Notice = updateData.Notice
 	user.Tags = updateData.Tags
 
-	storage.Save()
+	storage.Udate(user)
 
 	ctx.JSON(http.StatusOK, user)
 }
@@ -90,11 +91,11 @@ func LoginHandler(ctx *gin.Context) {
 	}
 
 	session, _ := storage.Store.Get(ctx.Request, storage.COOKIE_NAME)
-	session.Values["user"] = &user
+	session.Values["user"] = user.Id
 	session.Options.MaxAge = 3600
 	err = session.Save(ctx.Request, ctx.Writer)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, "Cookie Probleme, frag den Bäcker")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Cookie Probleme, frag den Bäcker"})
 		return
 	}
 	ctx.JSON(http.StatusOK, user)
@@ -106,23 +107,24 @@ func LogoutHandler(ctx *gin.Context) {
 		ctx.JSON(http.StatusNetworkAuthenticationRequired, "login to logout")
 		return
 	}
-	session.Values["user"] = nil
+	session.Values["user"] = ""
 	session.Save(ctx.Request, ctx.Writer)
-	ctx.JSON(http.StatusOK, "you logged out")
+	ctx.JSON(http.StatusOK, true)
 }
 
-func PlayHandler(ctx *gin.Context) {
-	params := struct {
-		Token string
-	}{}
-
-	if err := ctx.BindJSON(&params); err != nil {
-		ctx.JSON(http.StatusInternalServerError, fmt.Sprintln(err))
-		return
+// reset partners
+func ResetHandler(ctx *gin.Context) {
+	for i := range storage.Users {
+		storage.Users[i].Partner.Name = ""
+		storage.Users[i].Partner.Tags = nil
+		storage.Users[i].Partner.Notice = ""
 	}
+	ctx.JSON(http.StatusOK, "partner reset")
+	storage.Save()
+}
 
-	fmt.Println(params.Token)
-
+// roll the dice
+func PlayHandler(ctx *gin.Context) {
 	remaining := make([]int, len(storage.Users))
 	for i := range remaining {
 		remaining[i] = i
@@ -135,7 +137,7 @@ func PlayHandler(ctx *gin.Context) {
 		for {
 			randomIndex := rand.Intn(len(remaining))
 			if storage.Users[remaining[randomIndex]].Name != user.Name {
-				partner,_ := storage.GetPartner(storage.Users[remaining[randomIndex]].Id)
+				partner, _ := storage.GetPartner(storage.Users[remaining[randomIndex]].Id)
 				storage.Users[index].Partner = partner
 				remaining[randomIndex] = remaining[len(remaining)-1]
 				remaining = remaining[:len(remaining)-1]
@@ -157,9 +159,11 @@ func GetUserHandler(ctx *gin.Context) {
 		return
 	}
 
-	user, err := session.Values["user"].(*storage.User)
-	if !err {
-		ctx.JSON(http.StatusBadRequest, "lol you suck, login!")
+	id := session.Values["user"].(string)
+	user, err := storage.GetById(id)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "lol you suck, login!"})
 		return
 	}
 

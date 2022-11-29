@@ -3,9 +3,6 @@ function apiGet<T>(url: string) {
 		method: "GET",
 		credentials: "include",
 	}).then(response => {
-		if (!response.ok) {
-			throw new Error(response.statusText)
-		}
 		return response.json() as Promise<T>
 	})
 }
@@ -16,9 +13,6 @@ function apiPost<T>(url: string, args: {}) {
 		body: JSON.stringify(args),
 		credentials: "include",
 	}).then(response => {
-		if (!response.ok) {
-			throw new Error(response.statusText)
-		}
 		return response.json() as Promise<T>
 	})
 }

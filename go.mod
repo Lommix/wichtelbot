@@ -37,6 +37,7 @@ require (
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hjson/hjson-go v3.1.0+incompatible // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/joho/godotenv v1.4.0
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mattn/go-colorable v0.0.9 // indirect

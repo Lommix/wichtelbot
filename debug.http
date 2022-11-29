@@ -14,7 +14,7 @@ POST http://localhost:8080/register
 Content-Type: application/json
 
 {
-	"name":"dora",
+	"name":"lorenz",
 	"password":"123",
 	"notice":"gib money",
 	"tags":["kaffee", "alk"]
@@ -36,13 +36,16 @@ Content-Type: application/json
 #get user, requires session
 GET http://localhost:8080/user
 
-#play
-POST http://localhost:8080/play
+#reset
+GET http://localhost:8080/reset
 Content-Type: application/json
+Authorization: superdupersupersecrettoken
 
-{
-	"token" : "supersecretpassword"
-}
 
----
+#play
+GET http://localhost:8080/play
+Content-Type: application/json
+Authorization: superdupersupersecrettoken
+
+
 
