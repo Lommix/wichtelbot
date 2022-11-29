@@ -1,6 +1,6 @@
 [
  {
-  "Id": "3495cceb-c157-4136-ae34-128a5de36abd",
+  "Id": "61e61dc0-45dc-4638-8140-3844b225db90",
   "Name": "lorenz",
   "Password": "123",
   "Tags": [
@@ -8,21 +8,35 @@
    "alk"
   ],
   "Notice": "gib money",
-  "Partner": "155f9f53-f3c9-4ece-997a-8c9bc7d2a997"
+  "Partner": {
+   "Name": "tong",
+   "Tags": [
+    "kaffee",
+    "alk"
+   ],
+   "Notice": "gib money"
+  }
  },
  {
-  "Id": "155f9f53-f3c9-4ece-997a-8c9bc7d2a997",
-  "Name": "tong",
+  "Id": "85f0e8ff-384c-4b1c-9bef-c73f270215ef",
+  "Name": "stefan",
   "Password": "123",
   "Tags": [
    "kaffee",
    "alk"
   ],
   "Notice": "gib money",
-  "Partner": "3495cceb-c157-4136-ae34-128a5de36abd"
+  "Partner": {
+   "Name": "dora",
+   "Tags": [
+    "kaffee",
+    "alk"
+   ],
+   "Notice": "gib money"
+  }
  },
  {
-  "Id": "4b80e441-93e8-4073-a9f2-ffc6b7174ed4",
+  "Id": "c49c4521-7cf5-4cc3-b32f-60bfa87ea333",
   "Name": "toni",
   "Password": "123",
   "Tags": [
@@ -30,10 +44,35 @@
    "alk"
   ],
   "Notice": "gib money",
-  "Partner": ""
+  "Partner": {
+   "Name": "lorenz",
+   "Tags": [
+    "kaffee",
+    "alk"
+   ],
+   "Notice": "gib money"
+  }
  },
  {
-  "Id": "8d8b34ec-3795-4c3f-a0f5-5af9205c953d",
+  "Id": "24a44810-5fba-4192-9896-355856b2fbf9",
+  "Name": "tong",
+  "Password": "123",
+  "Tags": [
+   "kaffee",
+   "alk"
+  ],
+  "Notice": "gib money",
+  "Partner": {
+   "Name": "stefan",
+   "Tags": [
+    "kaffee",
+    "alk"
+   ],
+   "Notice": "gib money"
+  }
+ },
+ {
+  "Id": "e830dad0-794d-4fb8-b073-686b81c393a8",
   "Name": "dora",
   "Password": "123",
   "Tags": [
@@ -41,6 +80,13 @@
    "alk"
   ],
   "Notice": "gib money",
-  "Partner": ""
+  "Partner": {
+   "Name": "toni",
+   "Tags": [
+    "kaffee",
+    "alk"
+   ],
+   "Notice": "gib money"
+  }
  }
 ]

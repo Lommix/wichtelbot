@@ -22,7 +22,18 @@ Content-Type: application/json
 
 ---
 
-#get user
+#update user, requires session
+POST http://localhost:8080/update
+Content-Type: application/json
+
+{
+	"notice" : "gib more money",
+	"tags" : ["money", "silver", "gold"]
+}
+
+---
+
+#get user, requires session
 GET http://localhost:8080/user
 
 #play
@@ -30,7 +41,7 @@ POST http://localhost:8080/play
 Content-Type: application/json
 
 {
-	"token" : "testtoken"
+	"token" : "supersecretpassword"
 }
 
 ---

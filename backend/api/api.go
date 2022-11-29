@@ -43,6 +43,34 @@ func RegisterHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, user)
 }
 
+func UpdateHandler(ctx *gin.Context) {
+	updateData := struct {
+		Notice string
+		Tags   []string
+	}{}
+
+	if err := ctx.BindJSON(&updateData); err != nil {
+		ctx.JSON(http.StatusInternalServerError, fmt.Sprintln(err))
+		return
+	}
+
+
+	session, err := storage.Store.Get(ctx.Request, storage.COOKIE_NAME)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, "Cookie Probleme, frag den Bäcker")
+		return
+	}
+
+	user := session.Values["user"].(*storage.User)
+
+	user.Notice = updateData.Notice
+	user.Tags = updateData.Tags
+
+	storage.Save()
+
+	ctx.JSON(http.StatusOK, user)
+}
+
 func LoginHandler(ctx *gin.Context) {
 	loginData := struct {
 		Name     string
@@ -62,7 +90,7 @@ func LoginHandler(ctx *gin.Context) {
 	}
 
 	session, _ := storage.Store.Get(ctx.Request, storage.COOKIE_NAME)
-	session.Values["user"] = user
+	session.Values["user"] = &user
 	session.Options.MaxAge = 3600
 	err = session.Save(ctx.Request, ctx.Writer)
 	if err != nil {
@@ -84,30 +112,42 @@ func LogoutHandler(ctx *gin.Context) {
 }
 
 func PlayHandler(ctx *gin.Context) {
-	
+	params := struct {
+		Token string
+	}{}
+
+	if err := ctx.BindJSON(&params); err != nil {
+		ctx.JSON(http.StatusInternalServerError, fmt.Sprintln(err))
+		return
+	}
+
+	fmt.Println(params.Token)
+
 	remaining := make([]int, len(storage.Users))
-	for i := range remaining{
+	for i := range remaining {
 		remaining[i] = i
 	}
 
 	rand.Seed(time.Now().Unix())
 
-	for index, user := range storage.Users{
+	for index, user := range storage.Users {
 
 		for {
 			randomIndex := rand.Intn(len(remaining))
-			if storage.Users[remaining[randomIndex]].Name != user.Name{
-				storage.Users[index].Partner = storage.Users[remaining[randomIndex]].Id
-
-				remaining[randomIndex] = remaining[len(remaining) - 1]
-				remaining = remaining[:len(remaining) - 1]
+			if storage.Users[remaining[randomIndex]].Name != user.Name {
+				partner,_ := storage.GetPartner(storage.Users[remaining[randomIndex]].Id)
+				storage.Users[index].Partner = partner
+				remaining[randomIndex] = remaining[len(remaining)-1]
+				remaining = remaining[:len(remaining)-1]
 				break
 			}
 		}
 
 	}
 
-	ctx.JSON(http.StatusOK, storage.Users)
+	storage.Save()
+
+	ctx.JSON(http.StatusOK, "game played")
 }
 
 func GetUserHandler(ctx *gin.Context) {
@@ -116,5 +156,12 @@ func GetUserHandler(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, "invalid session")
 		return
 	}
-	ctx.JSON(http.StatusOK, session.Values["user"])
+
+	user, err := session.Values["user"].(*storage.User)
+	if !err {
+		ctx.JSON(http.StatusBadRequest, "lol you suck, login!")
+		return
+	}
+
+	ctx.JSON(http.StatusOK, user)
 }
