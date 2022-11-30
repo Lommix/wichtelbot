@@ -1,1 +1,6 @@
+/frontend/dist
+/frontend/node_modules
+debug.http
+data.json
+wichtel-app
 .env
