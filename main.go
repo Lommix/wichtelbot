@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"os"
 	"wichtel-app/backend/api"
 	"wichtel-app/backend/storage"
 
@@ -23,14 +25,16 @@ func main() {
 
 	router := gin.Default()
 
+	//http auth
+	addHttpAuth(router)
+
 	//debug
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:8080"},
+		AllowOrigins:     []string{"http://localhost:3000"},
 		AllowHeaders:     []string{"Origin"},
 		AllowMethods:     []string{"POST", "GET"},
 		AllowCredentials: true,
 	}))
-
 
 	//frontend api
 	router.Use(static.Serve("/", static.LocalFile("frontend/dist/", true)))
@@ -40,11 +44,32 @@ func main() {
 	router.GET("/user", api.GetUserHandler)
 	router.POST("/update", api.UpdateHandler)
 
-
 	//secret command api
 	router.GET("/reset", api.AuthHandler, api.ResetHandler)
 	router.GET("/play", api.AuthHandler, api.PlayHandler)
 
+	certPath := os.Getenv("cert")
+	keyPath := os.Getenv("key")
 
-	router.Run(":8080")
+	if certPath != "" && keyPath != "" {
+		fmt.Println("certs detected, running on ssl")
+		router.RunTLS(":443", certPath, keyPath)
+	} else {
+		router.Run(":8080")
+	}
+}
+
+func addHttpAuth(router *gin.Engine) {
+	user, ok := os.LookupEnv("user")
+	if !ok {
+		panic("env missing user")
+	}
+
+	password, ok := os.LookupEnv("password")
+	if !ok {
+		panic("env misssing password")
+	}
+	router.Use(gin.BasicAuth(gin.Accounts{
+		user: password,
+	}))
 }

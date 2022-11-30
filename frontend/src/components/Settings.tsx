@@ -16,33 +16,38 @@ const Settings: Component<{ notice: string, tags: string[] }> = (props) => {
 	const [tag, setTag] = createSignal<string>("");
 
 	const removeTag = (tag: string) => {
+
+		if (settings.Tags.length < MIN_TAGS) {
+			return
+		}
+
 		const tags = settings.Tags.filter((t) => t != tag)
 		setSettings("Tags", tags)
-		context.save(settings.Notice, settings.Tags)
+		context.update(settings.Notice, settings.Tags)
 	}
 
 	const addTag = (e: SubmitEvent) => {
 		e.preventDefault()
 		const tags = [...settings.Tags, tag()]
 		setSettings("Tags", tags)
-		context.save(settings.Notice, settings.Tags)
+		context.update(settings.Notice, settings.Tags)
 	}
 
 	const setNotice = (e) => {
 		setSettings("Notice", e.currentTarget.value)
-		context.save(settings.Notice, settings.Tags)
+		context.update(settings.Notice, settings.Tags)
 	}
 
 	onMount(() => {
 		setSettings({ Notice: context.user.Notice, Tags: context.user.Tags })
 	})
 
-	return <div>
+	return <div class="border-4 rounded-lg p-2 transition-all ease-in-out delay-150 transform">
 		<div class="flex flex-wrap gap-1 w-full content-start h-fit">
 			<For each={settings.Tags}>
 				{(tag: string) => (
 					<button
-						class="transition transform ease-in-out duration-300 hover:rounded-md hover:bg-error active:bg-secondary active:text-error text-md rounded-xl bg-accent border-1 border-accent h-fit p-2 text-secondary"
+						class="transition w-full transform ease-in-out duration-300 hover:rounded-md hover:bg-error active:bg-secondary active:text-error text-md rounded-xl bg-accent border-1 border-accent h-fit p-2 text-secondary"
 						onClick={() => removeTag(tag)} >
 						{tag}
 					</button>
@@ -60,7 +65,7 @@ const Settings: Component<{ notice: string, tags: string[] }> = (props) => {
 						value={tag()}
 						onChange={(e) => setTag(e.currentTarget.value)}
 						required
-						placeholder="Deine Wünsche" />
+						placeholder="Nenne ein Thema" />
 					<input type="submit" class="text-accent rounded-br-lg rounded-tr-lg font-bold p-2  bg-secondary" value=">" />
 				</form>
 			}
@@ -70,7 +75,7 @@ const Settings: Component<{ notice: string, tags: string[] }> = (props) => {
 				value={settings.Notice}
 				required
 				onChange={(e) => { setNotice(e) }}
-				placeholder="Hinweis" />
+				placeholder="Hinweis / Allergien" />
 		</Show>
 
 

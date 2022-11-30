@@ -2,11 +2,11 @@ import { createSignal, createContext, useContext, createRoot, createResource, cr
 import { createStore } from 'solid-js/store'
 import { apiPost, apiGet } from './api'
 
-const loginUrl = "http://localhost:8080/login"
-const registerUrl = "http://localhost:8080/register"
-const detailUrl = "http://localhost:8080/user"
-const logoutUrl = "http://localhost:8080/logout"
-const updateUrl = "http://localhost:8080/update"
+const loginUrl = "/login"
+const registerUrl = "/register"
+const detailUrl = "/user"
+const logoutUrl = "/logout"
+const updateUrl = "/update"
 
 export interface IUser {
 	Name: string,
@@ -25,26 +25,88 @@ function createApi() {
 	const [user, setUser] = createStore<IUser>(undefined)
 	const [error, setError] = createSignal<string>("")
 
-	const login = async (username: string, password: string) => apiPost<IUser>(loginUrl, { name: username, password: password }).then(user => {
-		setUser(user)
-		setLoggedIn(true)
-	})
-	const register = async (user: IUser) => apiPost<IUser>(registerUrl, user).then(user => {
-		setLoggedIn(true)
-		setUser(user)
-	})
-	const logout = async () => apiGet<boolean>(logoutUrl).then(response => {
-		setLoggedIn(false)
-		setUser(undefined)
-	})
-	const pullUser = async () => apiGet<IUser>(detailUrl).then(user => {
-		setUser(user)
-		setLoggedIn(true)
-	})
+	//register user
+	const register = async (user: IUser) => {
+		const promise = await fetch(registerUrl, {
+			method: "POST", credentials: "include", body: JSON.stringify(user)
+		})
+		const response = await promise.json()
+		if (promise.ok) {
+			setUser(response)
+			setLoggedIn(true)
+			setError("")
+		} else {
+			console.log(response)
+			setError(response.error)
+		}
+	}
 
-	const save = async (notice: string, tags: string[]) => apiPost<IUser>(updateUrl, { Notice: notice, Tags: tags }).then(user => setUser(user))
+	//login user
+	const login = async (username: string, password: string) => {
+		const promise = await fetch(loginUrl, {
+			method: "POST", credentials: "include", body: JSON.stringify({
+				Name: username,
+				password: password,
+			})
+		})
+		const response = await promise.json()
+		if (promise.ok) {
+			setUser(response)
+			setLoggedIn(true)
+			setError("")
+		} else {
+			setError(response.error)
+			console.log(response)
+		}
+	}
 
-	return { user, login, register, logout, save, loggedIn, pullUser }
+	//logout active session
+	const logout = async () => {
+		const promise = await fetch(logoutUrl, { method: "GET", credentials: "include" })
+		const response = await promise.json()
+		if (promise.ok) {
+			setUser(undefined)
+			setLoggedIn(false)
+			setError("")
+		} else {
+			setError(response.error)
+		}
+
+	}
+
+	//pull user from session
+	const pullUser = async () => {
+		const promise = await fetch(detailUrl, { method: "GET", credentials: "include" })
+		const response = await promise.json()
+		if (promise.ok) {
+			setUser(response)
+			setLoggedIn(true)
+			setError("")
+		} else {
+			setLoggedIn(false)
+		}
+	}
+
+	//update user settings
+	const update = async (notice: string, tags: string[]) => {
+		const promise = await fetch(updateUrl, {
+			method: "POST", credentials: "include", body: JSON.stringify({
+				Notice: notice,
+				Tags: tags,
+			})
+		})
+		const response = await promise.json()
+		if (promise.ok) {
+			setUser(response)
+			setLoggedIn(true)
+			setError("")
+		} else {
+			setLoggedIn(false)
+			setError(response.error)
+		}
+	}
+
+	return { user, login, register, logout, update, loggedIn, pullUser, error }
 }
 
 

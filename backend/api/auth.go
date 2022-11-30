@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// session auth middleware
 func AuthHandler(ctx *gin.Context) {
 	token, ok := os.LookupEnv("token")
 	if !ok {

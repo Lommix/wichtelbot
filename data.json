@@ -42,9 +42,8 @@
   "Password": "123",
   "Tags": [
    "das",
-   "extra",
-   "dasd",
-   "dasd"
+   "123",
+   "test"
   ],
   "Notice": "extra soße",
   "Partner": {
@@ -76,12 +75,43 @@
   "Name": "toni",
   "Password": "123",
   "Tags": [
+   "Küche",
+   "Bücher",
+   "Essen",
+   "asd"
+  ],
+  "Notice": "Mehr Nüsse",
+  "Partner": {
+   "Name": "",
+   "Tags": null,
+   "Notice": ""
+  }
+ },
+ {
+  "Id": "2d1fb86a-a232-464b-b58d-ed4ab1c7e649",
+  "Name": "lolo",
+  "Password": "123",
+  "Tags": [
    "lol",
    "lul",
-   "lel",
-   "GEEELD"
+   "lel"
   ],
-  "Notice": "DICK MONEY",
+  "Notice": "123",
+  "Partner": {
+   "Name": "",
+   "Tags": null,
+   "Notice": ""
+  }
+ },
+ {
+  "Id": "b14cb1cc-26a1-4850-95c6-6128bc737b0b",
+  "Name": "lorenz2",
+  "Password": "123",
+  "Tags": [
+   "Einen besonderes große Wurst",
+   "dasdasasdd"
+  ],
+  "Notice": "",
   "Partner": {
    "Name": "",
    "Tags": null,

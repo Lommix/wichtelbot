@@ -17,7 +17,6 @@ const Login: Component = () => {
 	}
 
 	return <div>
-		<h1 class="text-secondary text-lg w-full pb-5 text-center font-bold">GOGO-WICHTELBOT</h1>
 		<form onSubmit={tryLogin}>
 			<input
 				type="text"
@@ -35,10 +34,11 @@ const Login: Component = () => {
 				required
 				onChange={(e) => setUser("password", e.currentTarget.value)}
 				placeholder="Password" />
+			{ context.error() != "" && <p class="text-accent text-center border-4 mt-2 text-sm font-bold border-error">{context.error()}</p>}
 			<input
 				type="submit"
 				class="text-accent bg-secondary shadow-xl border-secondary border-2 rounded-md text-center w-full mt-2"
-				value="Enter" />
+				value="Anmelden" />
 		</form>
 	</div>;
 }

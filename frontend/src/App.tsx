@@ -17,8 +17,9 @@ const App: Component = () => {
 		<div>
 			<div class="w-screen h-screen flex origin-center bg-accent">
 				<div class="m-auto">
-					<img src="assets/gogopresent.png" class="w-54 -mb-4 ml-auto mr-auto " />
-					<div class="bg-primary border-primary w-64 p-8 border-6 rounded-lg shadow-lg">
+					<img src="/images/gogopresent.png" class="w-54 -mb-4 ml-auto mr-auto " />
+					<div class="bg-primary border-primary w-64 p-6 border-6 rounded-lg shadow-lg">
+						<h1 class="text-secondary text-lg w-full pb-5 text-center font-bold">GOGO-WICHTELBOT</h1>
 						<Show when={context.loggedIn()}>
 							<Detail user={context.user} />
 						</Show>
@@ -26,11 +27,11 @@ const App: Component = () => {
 							<Switch>
 								<Match when={showLogin()}>
 									<Login />
-									<button onClick={() => setShowLogin(false)}>Registrieren</button>
+									<button class="text-center mt-8 w-full border rounded-lg" onClick={() => setShowLogin(false)}>Zum Registrieren</button>
 								</Match>
 								<Match when={!showLogin()}>
 									<Register />
-									<button onClick={() => setShowLogin(true)}>Einloggen</button>
+									<button class="text-center mt-8 w-full border rounded-lg" onClick={() => setShowLogin(true)}>Zum Login</button>
 								</Match>
 							</Switch>
 						</Show>

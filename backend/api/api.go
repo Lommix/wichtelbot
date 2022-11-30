@@ -86,7 +86,7 @@ func LoginHandler(ctx *gin.Context) {
 	var user *storage.User
 	user, err := storage.Verify(loginData.Name, loginData.Password)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, fmt.Sprintln(err))
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintln(err)})
 		return
 	}
 
@@ -155,7 +155,7 @@ func PlayHandler(ctx *gin.Context) {
 func GetUserHandler(ctx *gin.Context) {
 	session, _ := storage.Store.Get(ctx.Request, storage.COOKIE_NAME)
 	if session.IsNew || session.Values["user"] == nil {
-		ctx.JSON(http.StatusBadRequest, "invalid session")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid session"})
 		return
 	}
 
