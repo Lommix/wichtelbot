@@ -24,7 +24,8 @@ func RegisterHandler(ctx *gin.Context) {
 	}
 
 	user.Id = uuid.NewV4().String()
-	storage.Users = append(storage.Users, user)
+	storage.StorageQueue <- user
+
 	err := storage.Save()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, fmt.Sprintln(err))
@@ -67,7 +68,7 @@ func UpdateHandler(ctx *gin.Context) {
 	user.Notice = updateData.Notice
 	user.Tags = updateData.Tags
 
-	storage.Udate(user)
+	storage.StorageQueue <- *user
 
 	ctx.JSON(http.StatusOK, user)
 }

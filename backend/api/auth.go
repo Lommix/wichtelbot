@@ -24,3 +24,21 @@ func AuthHandler(ctx *gin.Context) {
 		return
 	}
 }
+
+
+func RegisterAuthHandler(ctx *gin.Context){
+	token, ok := os.LookupEnv("password")
+	if !ok {
+		ctx.JSON(http.StatusNetworkAuthenticationRequired, gin.H{"message": "missing env token"})
+		ctx.Abort()
+		return
+	}
+	
+	bearerToken := ctx.Request.Header.Get("Authorization")
+
+	if bearerToken != token {
+		ctx.JSON(http.StatusNetworkAuthenticationRequired, gin.H{"error": "Der Schlüssel ist falsch"})
+		ctx.Abort()
+		return
+	}
+}

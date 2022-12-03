@@ -29,12 +29,34 @@ type Partner struct {
 var Key = []byte("superduperultrasecret")
 var Store *sessions.CookieStore = sessions.NewCookieStore(Key)
 var Users []User
+var StorageQueue = make(chan User, 100)
 
 const COOKIE_NAME = "session"
 
 func init() {
 	gob.Register(&Partner{})
 	gob.Register(&User{})
+}
+
+func StorageWorker() {
+	for {
+		user := <-StorageQueue
+		fmt.Println(user)
+		if Has(user.Id) {
+			for i := range Users {
+				if Users[i].Id == user.Id {
+					fmt.Println("updating user")
+					Users[i].Tags = user.Tags
+					Users[i].Notice = user.Notice
+					Save()
+				}
+			}
+		} else {
+			fmt.Println("saving user")
+			Users = append(Users, user)
+			Save()
+		}
+	}
 }
 
 // validate a user, retuns success
@@ -91,8 +113,6 @@ func Udate(user *User) {
 		if Users[i].Id == user.Id {
 			Users[i].Tags = user.Tags
 			Users[i].Notice = user.Notice
-
-			fmt.Println(Users[i])
 			Save()
 		}
 	}
@@ -100,9 +120,9 @@ func Udate(user *User) {
 }
 
 // Checks if username is registered
-func Has(name string) bool {
+func Has(id string) bool {
 	for _, user := range Users {
-		if user.Name == name {
+		if user.Id == id {
 			return true
 		}
 	}
@@ -145,5 +165,7 @@ func Load() error {
 	if err != nil {
 		return err
 	}
+
+	go StorageWorker()
 	return nil
 }

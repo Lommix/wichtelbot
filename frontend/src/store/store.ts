@@ -2,11 +2,11 @@ import { createSignal, createContext, useContext, createRoot, createResource, cr
 import { createStore } from 'solid-js/store'
 import { apiPost, apiGet } from './api'
 
-const loginUrl = "/login"
-const registerUrl = "/register"
-const detailUrl = "/user"
-const logoutUrl = "/logout"
-const updateUrl = "/update"
+const loginUrl = "http://localhost:8080/login"
+const registerUrl = "http://localhost:8080/register"
+const detailUrl = "http://localhost:8080/user"
+const logoutUrl = "http://localhost:8080/logout"
+const updateUrl = "http://localhost:8080/update"
 
 export interface IUser {
 	Name: string,
@@ -26,19 +26,23 @@ function createApi() {
 	const [error, setError] = createSignal<string>("")
 
 	//register user
-	const register = async (user: IUser) => {
+	const register = async (user: IUser, key : string) => {
 		const promise = await fetch(registerUrl, {
-			method: "POST", credentials: "include", body: JSON.stringify(user)
+			method: "POST", 
+			credentials: "include", 
+			body: JSON.stringify(user),
+			headers : new Headers({
+				'Authorization': key
+			})
 		})
+		
 		const response = await promise.json()
 		if (promise.ok) {
 			setUser(response)
 			setLoggedIn(true)
-			setError("")
-		} else {
-			console.log(response)
-			setError(response.error)
 		}
+
+		return response
 	}
 
 	//login user
@@ -71,7 +75,6 @@ function createApi() {
 		} else {
 			setError(response.error)
 		}
-
 	}
 
 	//pull user from session

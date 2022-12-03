@@ -37,7 +37,7 @@ const Login: Component = () => {
 			{ context.error() != "" && <p class="text-accent text-center border-4 mt-2 text-sm font-bold border-error">{context.error()}</p>}
 			<input
 				type="submit"
-				class="text-accent bg-secondary shadow-xl border-secondary border-2 rounded-md text-center w-full mt-2"
+				class="cursor-pointer text-accent bg-secondary shadow-xl border-secondary border-2 rounded-md text-center w-full mt-2"
 				value="Anmelden" />
 		</form>
 	</div>;

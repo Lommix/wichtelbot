@@ -15,7 +15,7 @@ const App: Component = () => {
 
 	return (
 		<div>
-			<div class="w-screen h-screen flex origin-center bg-accent">
+			<div class="w-screen h-screen flex origin-center">
 				<div class="m-auto">
 					<img src="/images/gogopresent.png" class="w-54 -mb-4 ml-auto mr-auto " />
 					<div class="bg-primary border-primary w-64 p-6 border-6 rounded-lg shadow-lg">
