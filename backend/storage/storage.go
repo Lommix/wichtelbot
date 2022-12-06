@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"encoding/base64"
 	"encoding/gob"
 	"encoding/json"
 	"errors"
@@ -48,6 +49,7 @@ func StorageWorker() {
 					fmt.Println("updating user")
 					Users[i].Tags = user.Tags
 					Users[i].Notice = user.Notice
+					Users[i].Partner = user.Partner
 					Save()
 				}
 			}
@@ -136,7 +138,8 @@ func Save() error {
 		return err
 	}
 
-	err = ioutil.WriteFile("data.json", output, 0644)
+	encoded := string(base64.StdEncoding.EncodeToString([]byte( output)))
+	err = ioutil.WriteFile("supercoolminidb.420", []byte(encoded), 0644)
 	if err != nil {
 		return err
 	}
@@ -146,26 +149,28 @@ func Save() error {
 // load file to memory
 func Load() error {
 
-	_, err := os.Stat("data.json")
+	go StorageWorker()
+
+	_, err := os.Stat("supercoolminidb.420")
 	if err != nil {
 		return nil
 	}
 
-	data, err := ioutil.ReadFile("data.json")
+	data, err := ioutil.ReadFile("supercoolminidb.420")
 	if err != nil {
 		return err
 	}
 
-	// decoded, err := base64.StdEncoding.DecodeString(string(data))
-	// if err!= nil{
-	// 	return err
-	// }
-
-	err = json.Unmarshal(data, &Users)
+	decoded, err := base64.StdEncoding.DecodeString(string(data))
 	if err != nil {
 		return err
 	}
 
-	go StorageWorker()
+	// err = json.Unmarshal(data, &Users)
+	err = json.Unmarshal(decoded, &Users)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

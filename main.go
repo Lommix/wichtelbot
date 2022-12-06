@@ -14,19 +14,18 @@ import (
 
 func main() {
 
+	// load .env
 	if godotenv.Load(".env") != nil {
 		panic("no env provided")
 	}
 
+	// load user file
 	err := storage.Load()
 	if err != nil {
 		panic("failed to load storage, data corrupted?")
 	}
 
 	router := gin.Default()
-
-	//http auth
-	// addHttpAuth(router)
 
 
 	//cors debug config
@@ -50,7 +49,7 @@ func main() {
 	//secret command api
 	router.GET("/reset", api.AuthHandler, api.ResetHandler)
 	router.GET("/play", api.AuthHandler, api.PlayHandler)
-
+	router.GET("/users", api.AuthHandler, api.GetAllUser)
 
 	//serve https
 	certPath := os.Getenv("cert")
@@ -64,6 +63,7 @@ func main() {
 	}
 }
 
+// basic auth test
 func addHttpAuth(router *gin.Engine) {
 	user, ok := os.LookupEnv("user")
 	if !ok {

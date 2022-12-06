@@ -27,7 +27,7 @@ const Login: Component = () => {
 				onChange={(e) => setUser("name", e.currentTarget.value)}
 				placeholder="Name" />
 			<input
-				type="text"
+				type="password"
 				class="w-full border-2 rounded-md border-accent mt-2 bg-accent text-secondary p-1"
 				id="name"
 				value={user.password}

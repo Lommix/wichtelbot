@@ -57,6 +57,11 @@ const Register: Component = () => {
 			return
 		}
 
+		if(fields.PasswordTwo.length < 4){
+			setError("Dein Passwort ist zu kurz")
+			return
+		}
+
 		const user: IUser = {
 			Name: fields.Name,
 			Password: fields.PasswordOne,

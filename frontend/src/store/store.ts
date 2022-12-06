@@ -8,6 +8,12 @@ const detailUrl = "http://localhost:8080/user"
 const logoutUrl = "http://localhost:8080/logout"
 const updateUrl = "http://localhost:8080/update"
 
+// const loginUrl = "/login"
+// const registerUrl = "/register"
+// const detailUrl = "/user"
+// const logoutUrl = "/logout"
+// const updateUrl = "/update"
+
 export interface IUser {
 	Name: string,
 	Tags: string[],

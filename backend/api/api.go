@@ -11,6 +11,8 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+
+// register user
 func RegisterHandler(ctx *gin.Context) {
 	var user storage.User
 	if err := ctx.ShouldBindJSON(&user); err != nil {
@@ -26,16 +28,10 @@ func RegisterHandler(ctx *gin.Context) {
 	user.Id = uuid.NewV4().String()
 	storage.StorageQueue <- user
 
-	err := storage.Save()
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, fmt.Sprintln(err))
-		return
-	}
-
 	session, _ := storage.Store.Get(ctx.Request, storage.COOKIE_NAME)
 	session.Values["user"] = user.Id
 	session.Options.MaxAge = 3600
-	err = session.Save(ctx.Request, ctx.Writer)
+	err := session.Save(ctx.Request, ctx.Writer)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Cookie Probleme, frag den Bäcker"})
 		return
@@ -44,6 +40,7 @@ func RegisterHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, user)
 }
 
+// update user
 func UpdateHandler(ctx *gin.Context) {
 	updateData := struct {
 		Notice string
@@ -73,6 +70,8 @@ func UpdateHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, user)
 }
 
+
+// login
 func LoginHandler(ctx *gin.Context) {
 	loginData := struct {
 		Name     string
@@ -102,6 +101,8 @@ func LoginHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, user)
 }
 
+
+// logout
 func LogoutHandler(ctx *gin.Context) {
 	session, _ := storage.Store.Get(ctx.Request, storage.COOKIE_NAME)
 	if session.IsNew {
@@ -112,6 +113,7 @@ func LogoutHandler(ctx *gin.Context) {
 	session.Save(ctx.Request, ctx.Writer)
 	ctx.JSON(http.StatusOK, true)
 }
+
 
 // reset partners
 func ResetHandler(ctx *gin.Context) {
@@ -124,6 +126,7 @@ func ResetHandler(ctx *gin.Context) {
 	storage.Save()
 }
 
+
 // roll the dice
 func PlayHandler(ctx *gin.Context) {
 	remaining := make([]int, len(storage.Users))
@@ -133,13 +136,13 @@ func PlayHandler(ctx *gin.Context) {
 
 	rand.Seed(time.Now().Unix())
 
-	for index, user := range storage.Users {
-
+	for _, user := range storage.Users {
 		for {
 			randomIndex := rand.Intn(len(remaining))
 			if storage.Users[remaining[randomIndex]].Name != user.Name {
 				partner, _ := storage.GetPartner(storage.Users[remaining[randomIndex]].Id)
-				storage.Users[index].Partner = partner
+				user.Partner = partner
+				storage.StorageQueue <- user
 				remaining[randomIndex] = remaining[len(remaining)-1]
 				remaining = remaining[:len(remaining)-1]
 				break
@@ -147,12 +150,11 @@ func PlayHandler(ctx *gin.Context) {
 		}
 
 	}
-
-	storage.Save()
-
 	ctx.JSON(http.StatusOK, "game played")
 }
 
+
+// user detail
 func GetUserHandler(ctx *gin.Context) {
 	session, _ := storage.Store.Get(ctx.Request, storage.COOKIE_NAME)
 	if session.IsNew || session.Values["user"] == nil {
@@ -169,4 +171,10 @@ func GetUserHandler(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, user)
+}
+
+
+// all users
+func GetAllUser(ctx *gin.Context){
+	ctx.JSON(http.StatusOK, storage.Users)
 }

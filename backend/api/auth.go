@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+
 // session auth middleware
 func AuthHandler(ctx *gin.Context) {
 	token, ok := os.LookupEnv("token")
@@ -26,6 +27,7 @@ func AuthHandler(ctx *gin.Context) {
 }
 
 
+// regsister secret key auth
 func RegisterAuthHandler(ctx *gin.Context){
 	token, ok := os.LookupEnv("password")
 	if !ok {
