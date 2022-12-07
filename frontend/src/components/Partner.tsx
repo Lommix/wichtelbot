@@ -5,7 +5,7 @@ import { Component, For } from "solid-js";
 
 const Partner: Component<{ name: string, notice: string, tags: string[] }> = (props) => {
 	return <div class="border-2 p-1 rounded-lg mt-2 border-accent bg-accent">
-		<p class="text-center mt-1 w-full">Dein Wichtel:</p>
+		<p class="text-secondary text-center mt-1 w-full">Dein Wichtel:</p>
 		<p class="relative w-full bg-accent text-secondary text-center font-bold border-b-2 p-4 border-secondary">{props.name}</p>
 		<p class="text-center mt-4 text-secondary">Themen:</p>
 		<For each={props.tags}>
