@@ -1,6 +1,6 @@
 
 # Go Wichtelbot App
-web app for randomly assigning gifting partners. I wrote this for family events like Christmas. Frontend is in german.
+Web app for randomly assigning gifting partners. I wrote this for family events like Christmas. Frontend is in german.
 
 Used Stack:
 - Backend: <strong>GO + GIN-Framework</strong>
@@ -10,16 +10,18 @@ To prevent (myself from) result peeking, data is stored in a Base64 encoded JSON
 
 ## How does it play?
 People register, listing some themes and allergies.
-
 Then the admin triggers the dice roll using a admin API. This action requires a valid admin token.
 
+This app required selfhosting. SSL Certifactes can be linked in the env file.
 ```
-#reset
+# Admin API Example
+
+# reset
 GET (URL)/reset
 Content-Type: application/json
 Authorization: superdupersupersecrettoken
 
-#play
+# roll the dice
 GET (URL)/play
 Content-Type: application/json
 Authorization: superdupersupersecrettoken
